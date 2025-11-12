@@ -3,10 +3,10 @@ package user
 import (
 	"E-01/entity"
 	"E-01/pkg/phonenumber"
+	"E-01/pkg/richerror"
 	"crypto/md5"
 	"encoding/hex"
 	"fmt"
-	"net/http"
 )
 
 type Repository interface {
@@ -115,11 +115,14 @@ type LoginResponse struct {
 
 type ErrorCode int
 
-func (s Service) Login(req LoginRequest) (LoginResponse, error, ErrorCode) {
+func (s Service) Login(req LoginRequest) (LoginResponse, error) {
+	const op = "userservice.Login"
 	// TODO - it would be better to user two separate method for existence check and getUserByPhoneNumber
 	user, exist, err := s.repo.GetUserByPhoneNumber(req.PhoneNumber)
 	if err != nil {
-		return LoginResponse{}, fmt.Errorf("unexpected error : %w", err), http.StatusBadRequest
+		return LoginResponse{}, richerror.New(op).
+		WithErr(err).
+		WithMeta(map[string]interface{}{"phone_number" : req.PhoneNumber})
 	}
 	if !exist {
 		return LoginResponse{}, fmt.Errorf("username or password isn't correct")
@@ -167,13 +170,13 @@ type ProfileResponse struct {
 
 // All Request inputes for interactor/service should be sanitized
 func (s Service) Profile(req ProfileRequest) (ProfileResponse, error) {
-	// 1. GetUserByID
+	const op = "userservice.Profile"
+
 	user, err := s.repo.GetUserByID(req.UserID)
 	if err != nil {
-		// I don't expect repository call return "record not found" error ,
-		//  because I assume the interactor input is sanitized
-		// TODO - we can use Reich Error
-		return ProfileResponse{}, fmt.Errorf("unexpected error : %w", err)
+		return ProfileResponse{}, richerror.New(op).WithErr(err).
+			WithMeta(map[string]interface{}{"req": req})
+		// return ProfileResponse{}, richerror.New(err ,"userservice.Profile", err.Error(),richerror.KindUnexpected,nil)
 	}
 	return ProfileResponse{Name: user.Name}, nil
 }

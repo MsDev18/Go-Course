@@ -2,6 +2,8 @@ package mysql
 
 import (
 	"E-01/entity"
+	"E-01/pkg/errmsg"
+	"E-01/pkg/richerror"
 	"database/sql"
 	"fmt"
 	"time"
@@ -31,26 +33,38 @@ func (d *MySQLDB) Register(u entity.User) (entity.User, error) {
 }
 
 func (d *MySQLDB) GetUserByPhoneNumber(phoneNumber string) (entity.User, bool, error) {
+	const op = "mysql.GetUserByPhoneNumber"
+	
 	row := d.db.QueryRow(`select * from users where phone_number = ?`, phoneNumber)
 	user, err := scanUser(row)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return entity.User{}, false, nil
 		}
-		return entity.User{}, false, fmt.Errorf("can't scan query result : %w", err)
+		return entity.User{}, false, richerror.New(op).
+			WithErr(err).
+			WithMessage(errmsg.ErrorMsgCantScanQueryResult).
+			WithKind(richerror.KindUnexpected)
 	}
 	return user, true, nil
 }
 
 func (d *MySQLDB) GetUserByID(userID uint) (entity.User, error) {
+	const op = "mysql.GetUserByID"
 	row := d.db.QueryRow(`select * from users where id = ?`, userID)
 
 	user, err := scanUser(row)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return entity.User{}, fmt.Errorf("Error not found : %w", err)
+			return entity.User{}, richerror.New(op).
+			WithErr(err).
+			WithMessage(errmsg.ErrorMsgNotFound).
+			WithKind(richerror.KindNotFound)
 		}
-		return entity.User{}, fmt.Errorf("can't scan query result : %w", err)
+		return entity.User{}, richerror.New(op).
+			WithErr(err).
+			WithMessage(errmsg.ErrorMsgCantScanQueryResult).
+			WithKind(richerror.KindUnexpected)
 	}
 	return user, nil
 }

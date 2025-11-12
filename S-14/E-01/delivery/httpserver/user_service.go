@@ -1,9 +1,11 @@
 package httpserver
 
 import (
+	"E-01/pkg/httpmsg"
 	"E-01/service/user"
-	"github.com/labstack/echo/v4"
 	"net/http"
+
+	"github.com/labstack/echo/v4"
 )
 
 func (s Server) userLogin(c echo.Context) error {
@@ -13,9 +15,9 @@ func (s Server) userLogin(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest)
 	}
 
-	resp, err, code := s.userSvc.Login(req)
+	resp, err := s.userSvc.Login(req)
 	if err != nil {
-		return echo.NewHTTPError(int(code), err.Error())
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 	return c.JSON(http.StatusOK, resp)
 }
@@ -36,7 +38,7 @@ func (s Server) userRegister(c echo.Context) error {
 
 func (s Server) userProfile(c echo.Context) error {
 	authToken := c.Request().Header.Get("Authorization")
-	
+
 	claims, err := s.authSvc.ParseToken(authToken)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusUnauthorized, err.Error())
@@ -44,8 +46,10 @@ func (s Server) userProfile(c echo.Context) error {
 
 	resp, err := s.userSvc.Profile(user.ProfileRequest{UserID: claims.UserID})
 	if err != nil {
-		return echo.NewHTTPError(http.StatusUnauthorized, err.Error())
+		msg, code := httpmsg.Error(err)
+		return echo.NewHTTPError(code, msg)
 	}
 
 	return c.JSON(http.StatusOK, resp)
 }
+
