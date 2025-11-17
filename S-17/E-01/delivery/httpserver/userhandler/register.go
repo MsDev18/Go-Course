@@ -1,7 +1,7 @@
 package userhandler
 
 import (
-	"E-01/dto"
+	"E-01/param"
 	"E-01/pkg/httpmsg"
 	"net/http"
 
@@ -10,7 +10,7 @@ import (
 
 func (h Handler) userRegister(c echo.Context) error {
 
-	var req dto.RegisterRequest
+	var req param.RegisterRequest
 	if err := c.Bind(&req); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}

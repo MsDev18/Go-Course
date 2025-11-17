@@ -1,7 +1,7 @@
 package userhandler
 
 import (
-	"E-01/dto"
+	"E-01/param"
 	"E-01/pkg/httpmsg"
 	"net/http"
 
@@ -16,7 +16,7 @@ func (h Handler) userProfile(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusUnauthorized, err.Error())
 	}
 
-	resp, err := h.userSvc.Profile(dto.ProfileRequest{UserID: claims.UserID})
+	resp, err := h.userSvc.Profile(param.ProfileRequest{UserID: claims.UserID})
 	if err != nil {
 		msg, code := httpmsg.Error(err)
 		return echo.NewHTTPError(code, msg)

@@ -1,12 +1,12 @@
 package userservice
 
 import (
-	"E-01/dto"
+	"E-01/param"
 	"E-01/entity"
 	"fmt"
 )
 
-func (s Service) Register(req dto.RegisterRequest) (dto.RegisterResponse, error) {
+func (s Service) Register(req param.RegisterRequest) (param.RegisterResponse, error) {
 
 	user := entity.User{
 		ID:          0,
@@ -18,11 +18,11 @@ func (s Service) Register(req dto.RegisterRequest) (dto.RegisterResponse, error)
 	// TODO - assign anonymose struct
 	createdUser, err := s.repo.Register(user)
 	if err != nil {
-		return dto.RegisterResponse{}, fmt.Errorf("unExpected error : %w", err)
+		return param.RegisterResponse{}, fmt.Errorf("unExpected error : %w", err)
 	}
 	// Return Created User
 
-	return dto.RegisterResponse{User: dto.UserInfo{
+	return param.RegisterResponse{User: param.UserInfo{
 		ID:          createdUser.ID,
 		PhoneNumber: createdUser.PhoneNumber,
 		Name:        createdUser.Name,
