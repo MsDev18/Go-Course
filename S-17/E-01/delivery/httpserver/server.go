@@ -2,6 +2,7 @@ package httpserver
 
 import (
 	"E-01/config"
+	"E-01/delivery/httpserver/userhandler"
 	"E-01/service/authservice"
 	"E-01/service/userservice"
 	"E-01/validator/uservalidator"
@@ -13,17 +14,13 @@ import (
 
 type Server struct {
 	config  config.Config
-	authSvc authservice.Service
-	userSvc userservice.Service
-	userValidator uservalidator.Validator 
+	userHandler userhandler.Handler
 }
 
-func New(config config.Config, authSvc authservice.Service, userSvc userservice.Service,userValidator uservalidator.Validator) Server {
+func New(config config.Config,authSvc authservice.Service, userSvc userservice.Service,userValidator uservalidator.Validator) Server {
 	return Server{
 		config:  config,
-		authSvc: authSvc,
-		userSvc: userSvc,
-		userValidator: userValidator,
+		userHandler: userhandler.New(authSvc, userSvc, userValidator),
 	}
 }
 
@@ -37,11 +34,7 @@ func (s Server) Serve() {
 	// Routes
 	e.GET("/health-check", s.healthCheck)
 
-	// "users" EndPoints
-	userGroup := e.Group("/users")
-	userGroup.POST("/register", s.userRegister)
-	userGroup.POST("/login", s.userLogin)
-	userGroup.GET("/profile", s.userProfile)
+	s.userHandler.SetUserRoutes(e)
 
 	// Start Server
 	e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", s.config.HTTPServer.Port)))

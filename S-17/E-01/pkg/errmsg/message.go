@@ -2,9 +2,10 @@ package errmsg
 
 
 const (
-	ErrMsgNotFound = "Record not found"
-	ErrMsgCantScanQueryResult = "Can't scan query result"
-	ErrMsgSomethingWentWrong = "Somethink went wrong"
-	ErrMsgPhoneNumberIsNotUnique = "Phone number is not unique"
-	ErrMsgInValidInput = "Invalid input"
+	ErrMsgNotFound = "record not found"
+	ErrMsgCantScanQueryResult = "can't scan query result"
+	ErrMsgSomethingWentWrong = "somethink went wrong"
+	ErrMsgPhoneNumberIsNotUnique = "phone number is not unique"
+	ErrMsgInValidInput = "invalid input"
+	ErrMsgPhoneNumberIsNotValid = "phone number is not valid"
 )
