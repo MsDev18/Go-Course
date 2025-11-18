@@ -13,14 +13,14 @@ import (
 )
 
 type Server struct {
-	config  config.Config
+	config      config.Config
 	userHandler userhandler.Handler
 }
 
-func New(config config.Config,authSvc authservice.Service, userSvc userservice.Service,userValidator uservalidator.Validator) Server {
+func New(config config.Config, authSvc authservice.Service, userSvc userservice.Service, userValidator uservalidator.Validator) Server {
 	return Server{
-		config:  config,
-		userHandler: userhandler.New(authSvc, userSvc, userValidator),
+		config:      config,
+		userHandler: userhandler.New(authSvc, userSvc, userValidator, config.Auth),
 	}
 }
 

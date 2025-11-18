@@ -2,19 +2,20 @@ package userhandler
 
 import (
 	"E-01/param"
+	"E-01/pkg/constant"
 	"E-01/pkg/httpmsg"
+	"E-01/service/authservice"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
 )
 
-func (h Handler) userProfile(c echo.Context) error {
-	authToken := c.Request().Header.Get("Authorization")
+func getClaims(c echo.Context) *authservice.Claims {
+	return c.Get(constant.AuthMiddlewareContextKey).(*authservice.Claims)
+}
 
-	claims, err := h.authSvc.ParseToken(authToken)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusUnauthorized, err.Error())
-	}
+func (h Handler) userProfile(c echo.Context) error {
+	claims := getClaims(c)
 
 	resp, err := h.userSvc.Profile(param.ProfileRequest{UserID: claims.UserID})
 	if err != nil {
