@@ -1,8 +1,8 @@
 package userhandler
 
 import (
+	"E-01/config"
 	"E-01/param"
-	"E-01/pkg/constant"
 	"E-01/pkg/httpmsg"
 	"E-01/service/authservice"
 	"net/http"
@@ -11,7 +11,7 @@ import (
 )
 
 func getClaims(c echo.Context) *authservice.Claims {
-	return c.Get(constant.AuthMiddlewareContextKey).(*authservice.Claims)
+	return c.Get(config.AuthMiddlewareContextKey).(*authservice.Claims)
 }
 
 func (h Handler) userProfile(c echo.Context) error {
