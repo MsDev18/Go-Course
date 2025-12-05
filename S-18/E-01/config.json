@@ -1,0 +1,9 @@
+{
+    "auth" : {
+        "access_token_expiration-duration" : "24h",
+
+    } , 
+    "http" : {
+        "port" : 8088
+    }
+}
