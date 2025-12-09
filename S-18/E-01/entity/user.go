@@ -6,4 +6,5 @@ type User struct {
 	Name        string
 	// Password Always Keep Hashed Password
 	Password string
+	Role Role
 }

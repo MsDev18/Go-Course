@@ -3,6 +3,7 @@ package main
 import (
 	"E-01/config"
 	"E-01/delivery/httpserver"
+	"E-01/repository/migrator"
 	"E-01/repository/mysql"
 	"E-01/service/authservice"
 	"E-01/service/userservice"
@@ -22,7 +23,8 @@ const (
 func main() {
 	// TODO - read config path from command-line
 	cfg2 := config.Load("config.yml")
-	fmt.Printf("cfg2 : %+v\n",cfg2)
+	fmt.Printf("cfg2 : %+v\n", cfg2)
+	// TODO - merge cfg to cfg2
 	cfg := config.Config{
 		HTTPServer: config.HTTPServer{Port: 8088},
 		Auth: authservice.Config{
@@ -42,8 +44,8 @@ func main() {
 	}
 
 	// TODO - add command for migration
-	// mgr := migrator.New(cfg.Mysql)
-	// mgr.Up()
+	mgr := migrator.New(cfg.Mysql)
+	mgr.Up()
 
 	authSvc, userSvc, userValidator := setupServices(cfg)
 
