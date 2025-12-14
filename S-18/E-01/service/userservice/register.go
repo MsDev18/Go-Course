@@ -1,8 +1,8 @@
 package userservice
 
 import (
-	"E-01/param"
 	"E-01/entity"
+	"E-01/param"
 	"fmt"
 )
 
@@ -13,6 +13,7 @@ func (s Service) Register(req param.RegisterRequest) (param.RegisterResponse, er
 		Name:        req.Name,
 		PhoneNumber: req.PhoneNumber,
 		Password:    getMD5Hash(req.Password),
+		Role:        entity.UserRole,
 	}
 	// Create New User In Storage
 	// TODO - assign anonymose struct

@@ -1,8 +1,9 @@
 package middleware
 
 import (
-	"E-01/service/authservice"
 	cfg "E-01/config"
+	"E-01/service/authservice"
+
 	mw "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
 )

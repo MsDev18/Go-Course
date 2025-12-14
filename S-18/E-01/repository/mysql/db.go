@@ -21,6 +21,10 @@ type MySQLDB struct {
 	db     *sql.DB
 }
 
+func (m *MySQLDB) Conn() *sql.DB {
+	return m.db
+}
+
 func New(config Config) *MySQLDB {
 	// string signiture for connecting to database
 	// "username:password@(host:port)/database_name"

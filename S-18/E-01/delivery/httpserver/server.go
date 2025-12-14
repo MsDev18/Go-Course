@@ -2,8 +2,11 @@ package httpserver
 
 import (
 	"E-01/config"
+	"E-01/delivery/httpserver/backofficeuserhandler"
 	"E-01/delivery/httpserver/userhandler"
+	"E-01/service/authorizationservice"
 	"E-01/service/authservice"
+	"E-01/service/backofficeuserservice"
 	"E-01/service/userservice"
 	"E-01/validator/uservalidator"
 	"fmt"
@@ -13,14 +16,17 @@ import (
 )
 
 type Server struct {
-	config      config.Config
-	userHandler userhandler.Handler
+	config                config.Config
+	userHandler           userhandler.Handler
+	backofficeUserHandler backofficeuserhandler.Handler
 }
 
-func New(config config.Config, authSvc authservice.Service, userSvc userservice.Service, userValidator uservalidator.Validator) Server {
+func New(config config.Config, authSvc authservice.Service, userSvc userservice.Service,
+	userValidator uservalidator.Validator, backofficeUserSvc backofficeuserservice.Service, authorizationSvc authorizationservice.Service) Server {
 	return Server{
-		config:      config,
-		userHandler: userhandler.New(authSvc, userSvc, userValidator, config.Auth),
+		config:                config,
+		userHandler:           userhandler.New(authSvc, userSvc, userValidator, config.Auth),
+		backofficeUserHandler: backofficeuserhandler.New(config.Auth, authSvc, backofficeUserSvc, authorizationSvc),
 	}
 }
 
@@ -34,7 +40,8 @@ func (s Server) Serve() {
 	// Routes
 	e.GET("/health-check", s.healthCheck)
 
-	s.userHandler.SetUserRoutes(e)
+	s.userHandler.SetRoutes(e)
+	s.backofficeUserHandler.SetRoutes(e)
 
 	// Start Server
 	e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", s.config.HTTPServer.Port)))
