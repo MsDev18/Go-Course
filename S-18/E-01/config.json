@@ -1,6 +1,6 @@
 {
     "auth" : {
-        "access_token_expiration-duration" : "24h",
+        "access_token_expiration-duration" : "24h"
 
     } , 
     "http" : {
