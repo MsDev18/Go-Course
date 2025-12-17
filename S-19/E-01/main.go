@@ -1,0 +1,64 @@
+package main
+
+import (
+	"E-01/adapter/redis"
+	"E-01/config"
+	"E-01/delivery/httpserver"
+	"E-01/repository/migrator"
+	"E-01/repository/mysql"
+	"E-01/repository/mysql/mysqlaccesscontrol"
+	"E-01/repository/mysql/mysqluser"
+	"E-01/repository/redis/redismatching"
+	"E-01/service/authorizationservice"
+	"E-01/service/authservice"
+	"E-01/service/backofficeuserservice"
+	"E-01/service/matchingservice"
+	"E-01/service/userservice"
+	"E-01/validator/matchingvalidator"
+	"E-01/validator/uservalidator"
+	"fmt"
+)
+
+
+
+func main() {
+	// TODO - read config path from command-line
+	cfg := config.Load("config.yml")
+	fmt.Printf("cfg : %+v\n", cfg)
+	// TODO - merge cfg to cfg2
+	
+
+	// TODO - add command for migration
+	mgr := migrator.New(cfg.Mysql)
+	mgr.Up()
+	// TODO - add stuct and add these returned items as struct field
+	authSvc, userSvc, userValidator, backofficeSvc, authorizationSvc, matchingSvc, matchingV := setupServices(cfg)
+
+	server := httpserver.New(cfg, authSvc, userSvc, userValidator, backofficeSvc, authorizationSvc, matchingSvc, matchingV)
+
+	fmt.Println("Start Echo Server ...")
+	server.Serve()
+}
+
+func setupServices(cfg config.Config) (authservice.Service, userservice.Service, uservalidator.Validator, backofficeuserservice.Service, authorizationservice.Service, matchingservice.Service, matchingvalidator.Validator) {
+	authSvc := authservice.New(cfg.Auth)
+
+	MysqlRepo := mysql.New(cfg.Mysql)
+
+	userMysql := mysqluser.New(MysqlRepo)
+	userSvc := userservice.New(authSvc, userMysql)
+
+	backofficeUserSvc := backofficeuserservice.New()
+
+	aclMysql := mysqlaccesscontrol.New(MysqlRepo)
+	authorizationSvc := authorizationservice.New(aclMysql)
+
+	uV := uservalidator.New(userMysql)
+
+	matchingV := matchingvalidator.New()
+	redisAdapter := redis.New(cfg.Redis)
+	matchingRepo := redismatching.New(redisAdapter)
+	matchingSvc := matchingservice.New(cfg.MatchingService, matchingRepo)
+
+	return authSvc, userSvc, uV, backofficeUserSvc, authorizationSvc, matchingSvc, matchingV
+}
