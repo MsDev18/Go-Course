@@ -1,8 +1,21 @@
 version: "3.7"
 
 services:
+  gameapp-redis:
+    image: redis:6.2.14
+    container_name: gameapp-redis
+    restart: always 
+    ports: 
+      - '6380:6379'
+    command: redis-server --loglevel warning --protected-mode no
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    volumes: 
+      - gameapp-redis-data:/data
+  
   gameapp-database:
     image: mysql:8.0
+    container_name: gameapp-database
     ports:
       - "3308:3306"
     volumes:
@@ -22,3 +35,4 @@ services:
 
 volumes:
   dbdata:
+  gameapp-redis-data:

@@ -1,65 +1,46 @@
 package main
 
 import (
+	"E-01/adapter/redis"
 	"E-01/config"
 	"E-01/delivery/httpserver"
 	"E-01/repository/migrator"
 	"E-01/repository/mysql"
 	"E-01/repository/mysql/mysqlaccesscontrol"
 	"E-01/repository/mysql/mysqluser"
+	"E-01/repository/redis/redismatching"
 	"E-01/service/authorizationservice"
 	"E-01/service/authservice"
 	"E-01/service/backofficeuserservice"
+	"E-01/service/matchingservice"
 	"E-01/service/userservice"
+	"E-01/validator/matchingvalidator"
 	"E-01/validator/uservalidator"
 	"fmt"
-	"time"
 )
 
-const (
-	JwtSignKey                 = "jwt_secret"
-	AccessTokenSubject         = "at"
-	RefreshTokenSubject        = "rt"
-	AccessTokenExpireDuration  = time.Hour * 24
-	RefreshTokenExpireDuration = time.Hour * 24 * 7
-)
+
 
 func main() {
 	// TODO - read config path from command-line
-	cfg2 := config.Load("config.yml")
-	fmt.Printf("cfg2 : %+v\n", cfg2)
+	cfg := config.Load("config.yml")
+	fmt.Printf("cfg : %+v\n", cfg)
 	// TODO - merge cfg to cfg2
-	cfg := config.Config{
-		HTTPServer: config.HTTPServer{Port: 8088},
-		Auth: authservice.Config{
-			SignKey:               JwtSignKey,
-			AccessExpirationTime:  AccessTokenExpireDuration,
-			RefreshExpirationTime: RefreshTokenExpireDuration,
-			AccessSubject:         AccessTokenSubject,
-			RefreshSubject:        RefreshTokenSubject,
-		},
-		Mysql: mysql.Config{
-			Username: "gameapp",
-			Password: "gameappt0lk2o20",
-			Port:     3308,
-			Host:     "localhost",
-			DBName:   "gameapp_db",
-		},
-	}
+	
 
 	// TODO - add command for migration
 	mgr := migrator.New(cfg.Mysql)
 	mgr.Up()
+	// TODO - add stuct and add these returned items as struct field
+	authSvc, userSvc, userValidator, backofficeSvc, authorizationSvc, matchingSvc, matchingV := setupServices(cfg)
 
-	authSvc, userSvc, userValidator, backofficeSvc, authorizationSvc := setupServices(cfg)
-
-	server := httpserver.New(cfg, authSvc, userSvc, userValidator, backofficeSvc, authorizationSvc)
+	server := httpserver.New(cfg, authSvc, userSvc, userValidator, backofficeSvc, authorizationSvc, matchingSvc, matchingV)
 
 	fmt.Println("Start Echo Server ...")
 	server.Serve()
 }
 
-func setupServices(cfg config.Config) (authservice.Service, userservice.Service, uservalidator.Validator, backofficeuserservice.Service, authorizationservice.Service) {
+func setupServices(cfg config.Config) (authservice.Service, userservice.Service, uservalidator.Validator, backofficeuserservice.Service, authorizationservice.Service, matchingservice.Service, matchingvalidator.Validator) {
 	authSvc := authservice.New(cfg.Auth)
 
 	MysqlRepo := mysql.New(cfg.Mysql)
@@ -73,5 +54,11 @@ func setupServices(cfg config.Config) (authservice.Service, userservice.Service,
 	authorizationSvc := authorizationservice.New(aclMysql)
 
 	uV := uservalidator.New(userMysql)
-	return authSvc, userSvc, uV, backofficeUserSvc, authorizationSvc
+
+	matchingV := matchingvalidator.New()
+	redisAdapter := redis.New(cfg.Redis)
+	matchingRepo := redismatching.New(redisAdapter)
+	matchingSvc := matchingservice.New(cfg.MatchingService, matchingRepo)
+
+	return authSvc, userSvc, uV, backofficeUserSvc, authorizationSvc, matchingSvc, matchingV
 }

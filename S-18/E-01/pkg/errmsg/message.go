@@ -8,4 +8,5 @@ const (
 	ErrMsgInValidInput           = "invalid input"
 	ErrMsgPhoneNumberIsNotValid  = "phone number is not valid"
 	ErrMsgUserNotAllowd          = "user not allowed"
+	ErrMsgCategoryIsNotValid     = "category is not valid"
 )
