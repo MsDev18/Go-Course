@@ -19,14 +19,11 @@ import (
 	"fmt"
 )
 
-
-
 func main() {
 	// TODO - read config path from command-line
 	cfg := config.Load("config.yml")
 	fmt.Printf("cfg : %+v\n", cfg)
 	// TODO - merge cfg to cfg2
-	
 
 	// TODO - add command for migration
 	mgr := migrator.New(cfg.Mysql)
@@ -36,7 +33,6 @@ func main() {
 
 	server := httpserver.New(cfg, authSvc, userSvc, userValidator, backofficeSvc, authorizationSvc, matchingSvc, matchingV)
 
-	fmt.Println("Start Echo Server ...")
 	server.Serve()
 }
 

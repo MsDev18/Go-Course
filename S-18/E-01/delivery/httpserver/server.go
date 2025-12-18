@@ -27,12 +27,12 @@ type Server struct {
 
 func New(config config.Config, authSvc authservice.Service, userSvc userservice.Service,
 	userValidator uservalidator.Validator, backofficeUserSvc backofficeuserservice.Service,
-	 authorizationSvc authorizationservice.Service ,matchingSvc matchingservice.Service, matchingValidator matchingvalidator.Validator) Server {
+	authorizationSvc authorizationservice.Service, matchingSvc matchingservice.Service, matchingValidator matchingvalidator.Validator) Server {
 	return Server{
 		config:                config,
 		userHandler:           userhandler.New(authSvc, userSvc, userValidator, config.Auth),
 		backofficeUserHandler: backofficeuserhandler.New(config.Auth, authSvc, backofficeUserSvc, authorizationSvc),
-		matchingHandler: matchinghandler.New(config.Auth, authSvc, matchingSvc, matchingValidator),
+		matchingHandler:       matchinghandler.New(config.Auth, authSvc, matchingSvc, matchingValidator),
 	}
 }
 
@@ -51,5 +51,7 @@ func (s Server) Serve() {
 	s.matchingHandler.SetRoutes(e)
 
 	// Start Server
-	e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", s.config.HTTPServer.Port)))
+	address := s.config.HTTPServer.Port
+	fmt.Printf("Start Echo Server On %d", address)
+	e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", address)))
 }

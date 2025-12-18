@@ -14,8 +14,8 @@ type Migrator struct {
 	migrations *migrate.FileMigrationSource
 }
 
-// TODO - set migration table name 
-// TODO - add limit to Up and Down method 
+// TODO - set migration table name
+// TODO - add limit to Up and Down method
 func New(dbConfig mysql.Config) Migrator {
 	// OR: Read migrations from folder;
 	migrations := &migrate.FileMigrationSource{
@@ -39,7 +39,7 @@ func (m Migrator) Up() {
 		panic(fmt.Sprintf("can't apply migration: %v", err))
 
 	}
-	fmt.Printf("Migrate %d migrations !", n)
+	fmt.Printf("Migrate %d migrations! \n", n)
 }
 func (m Migrator) Down() {
 	db, err := sql.Open(m.dialect, fmt.Sprintf("%s:%s@(%s:%d)/%s?parseTime=true", m.dbConfig.Username, m.dbConfig.Password, m.dbConfig.Host, m.dbConfig.Port, m.dbConfig.DBName))
