@@ -5,6 +5,7 @@ import (
 	"E-01/pkg/errmsg"
 	"E-01/pkg/richerror"
 	"E-01/repository/mysql"
+	"context"
 	"database/sql"
 	"fmt"
 	"time"
@@ -55,9 +56,9 @@ func (d *DB) GetUserByPhoneNumber(phoneNumber string) (entity.User, error) {
 	return user, nil
 }
 
-func (d *DB) GetUserByID(userID uint) (entity.User, error) {
+func (d *DB) GetUserByID(ctx context.Context, userID uint) (entity.User, error) {
 	const op = "mysql.GetUserByID"
-	row := d.conn.Conn().QueryRow(`select * from users where id = ?`, userID)
+	row := d.conn.Conn().QueryRowContext(ctx, `select * from users where id = ?`, userID)
 
 	user, err := scanUser(row)
 	if err != nil {

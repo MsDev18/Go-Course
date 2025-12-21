@@ -9,7 +9,6 @@ import (
 	"E-01/repository/mysql/mysqlaccesscontrol"
 	"E-01/repository/mysql/mysqluser"
 	"E-01/repository/redis/redismatching"
-	"E-01/scheduler"
 	"E-01/service/authorizationservice"
 	"E-01/service/authservice"
 	"E-01/service/backofficeuserservice"
@@ -21,7 +20,7 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
-	"sync"
+
 )
 
 func main() {
@@ -41,35 +40,21 @@ func main() {
 		server.Serve()
 	}()
 
-	done := make(chan bool)
-	var wg sync.WaitGroup
-	go func() {
-		sch := scheduler.New(matchingSvc)
-		wg.Add(1)
-		sch.Start(done, &wg)
-	}()
-
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)
 	<-quit
 
-	fmt.Println("recived interrupt signal, shotting down gracefully... ")
-	done <- true
-
 	ctx := context.Background()
 	ctxWithTimeout, cancel := context.WithTimeout(ctx, cfg.Application.GracefulShotDownTimeout)
 	defer cancel()
+
 
 	if err := server.Router.Shutdown(ctxWithTimeout); err != nil {
 		fmt.Println("HTTP Server Shotdown Error : ", err)
 	}
 
 	fmt.Println("recived interrupt signal, shotting down gracefully... ")
-	// TODO - does order of ctx.Done & wg.Wait matter ?!
 	<-ctxWithTimeout.Done()
-
-	wg.Wait()
-	
 }
 
 func setupServices(cfg config.Config) (authservice.Service, userservice.Service, uservalidator.Validator, backofficeuserservice.Service, authorizationservice.Service, matchingservice.Service, matchingvalidator.Validator) {

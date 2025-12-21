@@ -2,6 +2,7 @@ package userservice
 
 import (
 	"E-01/entity"
+	"context"
 	"crypto/md5"
 	"encoding/hex"
 )
@@ -10,7 +11,7 @@ type Repository interface {
 
 	Register(u entity.User) (entity.User, error)
 	GetUserByPhoneNumber(phoneNumber string) (entity.User, error)
-	GetUserByID(userID uint) (entity.User, error)
+	GetUserByID(ctx context.Context,userID uint) (entity.User, error)
 }
 
 type AuthGenerator interface {

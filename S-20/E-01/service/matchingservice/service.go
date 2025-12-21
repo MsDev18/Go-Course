@@ -4,6 +4,7 @@ import (
 	"E-01/entity"
 	"E-01/param"
 	"E-01/pkg/richerror"
+	"fmt"
 	"time"
 )
 
@@ -19,10 +20,10 @@ type Service struct {
 	config Config
 }
 
-func New(config Config,repo Repository) Service {
+func New(config Config, repo Repository) Service {
 	return Service{
 		config: config,
-		repo: repo,
+		repo:   repo,
 	}
 }
 
@@ -37,4 +38,9 @@ func (s Service) AddToWatingList(req param.AddToWaitingListRequest) (param.AddTo
 	return param.AddToWaitingListResponse{
 		Timeout: s.config.WaitingTimeout,
 	}, nil
+}
+
+func (s Service) MatchWaitedUsers(req param.MatchWaitedUsersRequest) (param.MatchWaitedUsersResponse, error) {
+	fmt.Println("MatchWaitedUsers", time.Now())
+	return param.MatchWaitedUsersResponse{}, nil
 }
