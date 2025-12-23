@@ -3,9 +3,9 @@ package redismatching
 import (
 	"E-01/entity"
 	"E-01/pkg/richerror"
+	"E-01/pkg/timestamp"
 	"context"
 	"fmt"
-	"time"
 
 	"github.com/redis/go-redis/v9"
 )
@@ -17,7 +17,7 @@ func (d DB) AddToWaitingList(userID uint, category entity.Category) error {
 	const op = "redismatching.AddToWaitingList"
 	
 	_, err := d.adapter.Client().ZAdd(context.Background() , fmt.Sprintf("%s:%s", WaitingListPrefix, category), redis.Z{
-		Score: float64(time.Now().UnixMicro()),
+		Score: float64(timestamp.Now()),
 		Member: fmt.Sprintf("%d", userID),
 	}).Result()
 

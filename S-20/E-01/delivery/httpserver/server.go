@@ -9,6 +9,7 @@ import (
 	"E-01/service/authservice"
 	"E-01/service/backofficeuserservice"
 	"E-01/service/matchingservice"
+	"E-01/service/presenceservice"
 	"E-01/service/userservice"
 	"E-01/validator/matchingvalidator"
 	"E-01/validator/uservalidator"
@@ -24,17 +25,22 @@ type Server struct {
 	backofficeUserHandler backofficeuserhandler.Handler
 	matchingHandler       matchinghandler.Handler
 	Router *echo.Echo
+	presenceSvc presenceservice.Service
 }
 
 func New(config config.Config, authSvc authservice.Service, userSvc userservice.Service,
 	userValidator uservalidator.Validator, backofficeUserSvc backofficeuserservice.Service,
-	authorizationSvc authorizationservice.Service, matchingSvc matchingservice.Service, matchingValidator matchingvalidator.Validator) Server {
+	authorizationSvc authorizationservice.Service, matchingSvc matchingservice.Service,
+	matchingValidator matchingvalidator.Validator,
+	presenceSvc presenceservice.Service,
+	) Server {
 	return Server{
 		Router: echo.New(),
 		config:                config,
-		userHandler:           userhandler.New(authSvc, userSvc, userValidator, config.Auth),
+		userHandler:           userhandler.New(authSvc, userSvc, userValidator, config.Auth, presenceSvc),
 		backofficeUserHandler: backofficeuserhandler.New(config.Auth, authSvc, backofficeUserSvc, authorizationSvc),
-		matchingHandler:       matchinghandler.New(config.Auth, authSvc, matchingSvc, matchingValidator),
+		matchingHandler:       matchinghandler.New(config.Auth, authSvc, matchingSvc, matchingValidator, presenceSvc),
+		presenceSvc: presenceSvc,
 	}
 }
 

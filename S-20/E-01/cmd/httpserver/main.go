@@ -20,7 +20,6 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
-
 )
 
 func main() {

@@ -3,8 +3,10 @@ package config
 import (
 	"E-01/adapter/redis"
 	"E-01/repository/mysql"
+	"E-01/scheduler"
 	"E-01/service/authservice"
 	"E-01/service/matchingservice"
+	"E-01/service/presenceservice"
 	"time"
 )
 
@@ -23,4 +25,6 @@ type Config struct {
 	Mysql           mysql.Config           `koanf:"mysql"`
 	MatchingService matchingservice.Config `koanf:"matching_service"`
 	Redis           redis.Config           `koanf:"redis"`
+	PresenceService presenceservice.Config `koanf:"presence_service"`
+	Scheduler       scheduler.Config       `koanf:"scheduler"`
 }
