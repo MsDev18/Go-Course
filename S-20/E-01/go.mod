@@ -2,7 +2,7 @@ module E-01
 
 go 1.24.2
 
-// Watched To S-21 ||| E-02 ||| 01:00:00 Minutes
+// Watched To S-21 ||| E-03 ||| 01:25:00 Minutes
 // Finished ...
 
 require (
@@ -19,6 +19,7 @@ require (
 	github.com/labstack/echo/v4 v4.13.4
 	github.com/redis/go-redis/v9 v9.17.2
 	github.com/rubenv/sql-migrate v1.8.0
+	github.com/thoas/go-funk v0.9.3
 )
 
 require (
