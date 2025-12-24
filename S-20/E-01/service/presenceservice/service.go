@@ -1,6 +1,7 @@
 package presenceservice
 
 import (
+	"E-01/contract/golang/presence"
 	"E-01/param"
 	"E-01/pkg/richerror"
 	"context"
@@ -40,6 +41,10 @@ func (s Service) Upsert(ctx context.Context, req param.UpsertPrecenseRequest) (p
 	return param.UpsertPresenceResponse{}, nil
 }
 
+
+func (s Service) GetPresence2(ctx context.Context, request presence.GetPresenceRequest)(presence.GetPresenceResponse, error) {
+	return presence.GetPresenceResponse{}, nil
+}
 
 func (s Service) GetPresence(ctx context.Context, request param.GetPresenceRequest)(param.GetPresenceResponse, error) {
 	return param.GetPresenceResponse{}, nil
