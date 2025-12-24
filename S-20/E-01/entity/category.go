@@ -19,6 +19,6 @@ func (c Category) IsValid() bool {
 func CategoryList () []Category {
 	return []Category{
 		FootballCategory,
-		HistoryCategory
+		HistoryCategory,
 	}
 }
