@@ -1,7 +1,7 @@
 package param
 
 type GetPresenceRequest struct {
-	UserIDs []uint
+	UserIDs []uint64
 }
 
 type GetPresenceResponse struct {

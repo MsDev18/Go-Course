@@ -172,7 +172,9 @@ const file_contract_presence_presence_proto_rawDesc = "" +
 	"\x05items\x18\x01 \x03(\v2\x19.presence.GetPresenceItemR\x05items\"H\n" +
 	"\x0fGetPresenceItem\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x04R\x06userId\x12\x1c\n" +
-	"\ttimestamp\x18\x02 \x01(\x03R\ttimestampB\x1aZ\x18contract/golang/presenceb\x06proto3"
+	"\ttimestamp\x18\x02 \x01(\x03R\ttimestamp2]\n" +
+	"\x0fPresenceService\x12J\n" +
+	"\vGetPresence\x12\x1c.presence.GetPresenceRequest\x1a\x1d.presence.GetPresenceResponseB\x1aZ\x18contract/golang/presenceb\x06proto3"
 
 var (
 	file_contract_presence_presence_proto_rawDescOnce sync.Once
@@ -194,8 +196,10 @@ var file_contract_presence_presence_proto_goTypes = []any{
 }
 var file_contract_presence_presence_proto_depIdxs = []int32{
 	2, // 0: presence.GetPresenceResponse.items:type_name -> presence.GetPresenceItem
-	1, // [1:1] is the sub-list for method output_type
-	1, // [1:1] is the sub-list for method input_type
+	0, // 1: presence.PresenceService.GetPresence:input_type -> presence.GetPresenceRequest
+	1, // 2: presence.PresenceService.GetPresence:output_type -> presence.GetPresenceResponse
+	2, // [2:3] is the sub-list for method output_type
+	1, // [1:2] is the sub-list for method input_type
 	1, // [1:1] is the sub-list for extension type_name
 	1, // [1:1] is the sub-list for extension extendee
 	0, // [0:1] is the sub-list for field type_name
@@ -214,7 +218,7 @@ func file_contract_presence_presence_proto_init() {
 			NumEnums:      0,
 			NumMessages:   3,
 			NumExtensions: 0,
-			NumServices:   0,
+			NumServices:   1,
 		},
 		GoTypes:           file_contract_presence_presence_proto_goTypes,
 		DependencyIndexes: file_contract_presence_presence_proto_depIdxs,
